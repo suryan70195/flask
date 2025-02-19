@@ -1,28 +1,31 @@
-pipeline {
+peline {
     agent any
 
     environment {
-        IMAGE_NAME = "yourdockerhubusername/lightweight-app"
+        IMAGE_NAME = "kubersurya/lightweight-app"
         TAG = "latest"
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/your-repo/lightweight-app.git'
+                git 'https://github.com/suryan70195/flask.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:$TAG .'
+                script {
+                    // Build Docker image
+                    sh 'docker build -t $IMAGE_NAME:$TAG .'
+                }
             }
         }
 
         stage('Login to Docker Hub') {
             steps {
-                withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_PASSWORD')]) {
-                    sh 'echo $DOCKER_PASSWORD | docker login -u yourdockerhubusername --password-stdin'
+                withCredentials([string(credentialsId: 'dockerhub-jenkins-token', variable: 'DOCKER_PASSWORD')]) {
+                    sh 'echo $DOCKER_PASSWORD | docker login -u kubersurya --password-stdin'
                 }
             }
         }
@@ -35,8 +38,12 @@ pipeline {
 
         stage('Run Container (Optimized)') {
             steps {
-                sh 'docker run -d -p 5000:5000 --name lightweight-app --memory=128m --cpus=0.2 $IMAGE_NAME:$TAG'
+                script {
+                    // Run Docker container
+                    sh 'docker run -d -p 5000:5000 --name lightweight-flask-app kubersurya/lightweight-app:latest'
+                }
             }
         }
     }
 }
+

@@ -1,0 +1,6 @@
+t
+node_modules
+*.log
+*.tmp
+*.swp
+
